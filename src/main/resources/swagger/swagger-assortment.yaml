@@ -1,0 +1,294 @@
+swagger: "2.0"
+info:
+  description: "This is a dispatch API who consumes a RabbitMQ's queue and saves to James API the data refined."
+  version: "1.0.0"
+  title: "API GPA-James"
+  contact:
+    email: "luiz.povoa@jamesdelivery.com.br"
+host: "52.32.160.33"
+basePath: "/apigpa/v1"
+schemes:
+  - "https"
+  - "http"
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /assortment:
+    post:
+      tags:
+        - "Assortment"
+      summary: "Update data related to offers and promotions"
+      description: ""
+      operationId: "updateAssortment"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Assorted object needed to be updated."
+          required: true
+          schema:
+            $ref: "#/definitions/Assortment"
+      responses:
+        '200':
+          description: Ok
+        '404':
+          description: Document not found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        default:
+          description: Unexpected Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+  /price:
+    post:
+      tags:
+        - "Price"
+      summary: "Update price related to offers and promotions"
+      description: ""
+      operationId: "updatePrice"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Update price of products."
+          required: true
+          schema:
+            $ref: "#/definitions/Prices"
+      responses:
+        '200':
+          description: Ok
+        '404':
+          description: Document not found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        default:
+          description: Unexpected Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+  /storage:
+    post:
+      tags:
+        - "Storage"
+      summary: "Update information of stock product."
+      description: ""
+      operationId: "updateStock"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Update stock of products."
+          required: true
+          schema:
+            $ref: "#/definitions/Storage"
+      responses:
+        '200':
+          description: Ok
+        '404':
+          description: Document not found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        default:
+          description: Unexpected Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+
+definitions:
+
+  Assortment:
+    description: Assortment object
+    type: object
+    properties:
+      storyId:
+        type: integer
+        format: int64
+        example: 1234567
+      categories:
+        type: array
+        items:
+          $ref: "#/definitions/Categories"
+
+  Categories:
+    description: Categories
+    type: object
+    required:
+      - gpaId
+    properties:
+      title:
+        type: string
+      gpaId:
+        type: integer
+        format: int64
+        example: 1234567
+        description: Unique identifier of the gpaId
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/Item"
+
+  Eans:
+    type: string
+    example: 12356536725167, 83827328232322, 92728378232323
+
+
+  Item:
+    description: Assortment object
+    type: object
+    required:
+      - product
+    properties:
+      product:
+        type: integer
+        format: int64
+        example: 1234567
+        description:  (número, 7 caracteres)
+      price:
+        type: number
+        example: 59.90
+        minimum: 0
+        exclusiveMinimum: true
+        description: Amount available for the Product. 'minimum >= 0'
+      currentPrice:
+        type: number
+        example: 59.90
+        minimum: 0
+        exclusiveMinimum: true
+        description: Amount available for the Product. 'minimum >= 0'
+      storage:
+        type: integer
+        example: 75
+        description: Quantity in storage
+      name:
+        type: string
+        example: string
+        description: Name of product
+      shortDescription:
+        type: string
+        example: string
+        description: Short descrition of product
+      eans:
+        type: array
+        items:
+          $ref: "#/definitions/Eans"
+      mapOfImages:
+        type: array
+        items:
+          type: string
+          example: /images/photos01.jpg, /images/photos02.jpg
+
+  Price:
+    description: Price object
+    type: object
+    required:
+      - product
+    properties:
+      product:
+        type: integer
+        format: int64
+        example: 1234567
+        description:  (número, 7 caracteres)
+      price:
+        type: number
+        example: 59.90
+        minimum: 0
+        exclusiveMinimum: true
+        description: Amount available for the Product. 'minimum >= 0'
+      currentPrice:
+        type: number
+        example: 59.90
+        minimum: 0
+        exclusiveMinimum: true
+        description: Amount available for the Product. 'minimum >= 0'
+
+  Prices:
+    description: List of prices
+    type: object
+    properties:
+      storyId:
+        type: integer
+        format: int64
+        example: 1234567
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/Price"
+
+
+  Stock:
+    description: Stock object
+    type: object
+    required:
+      - product
+    properties:
+      product:
+        type: integer
+        format: int64
+        example: 1234567
+        description:  (número, 7 caracteres)
+      storage:
+        type: number
+        example: 45
+        minimum: 0
+        exclusiveMinimum: true
+        description: Stock available for the Product. 'minimum >= 0'
+
+  Storage:
+    description: List of stock products
+    type: object
+    properties:
+      storyId:
+        type: integer
+        format: int64
+        example: 1234567
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/Stock"
+
+  ErrorModel:
+    type: object
+    required:
+      - codeBuilderComplete
+      - message
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+
+securityDefinitions:
+  OauthSecurity:
+    type: oauth2
+    flow: accessCode
+    authorizationUrl: 'https://jamesdelivery.com.br./security/iam/v1/user-identities/login'
+    tokenUrl: 'https://jamesdelivery.com.br./security/iam/v1/user-identities/login'
+    scopes:
+      bearer: Token Based Authentication
+security:
+  - OauthSecurity:
+      - bearer
